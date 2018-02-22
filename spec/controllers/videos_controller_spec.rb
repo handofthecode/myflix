@@ -24,8 +24,6 @@ describe VideosController do
 		end
 	end
 
-
-
 	describe "GET search" do
 		let(:video) { Fabricate(:video, title: "Die Hard") }
 		context "with authenticated user" do
@@ -42,8 +40,4 @@ describe VideosController do
 			end
 		end
 	end
-end
-
-def authenticate
-	session[:user_id] = Fabricate(:user).id
 end

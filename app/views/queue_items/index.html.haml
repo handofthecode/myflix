@@ -10,46 +10,32 @@
               %th(width="10%") List Order
               %th(width="30%") Video Title
               %th(width="10%") Play
-              %th(width="20%") Rating
+              %th(width="10%") Your Rating
+              %th(width="15%") Avg. Rating
               %th(width="15%") Genre
-              %th(width="15%") Remove
+              %th(width="10%") Remove
           %tbody
-            %tr
-              %td
-                %input.form-control(type="text" value="1")
-              %td
-                = link_to "Futurama"
-              %td
-                = button_to "Play", nil, class: "btn btn-default"
-              %td
-                %select.form-group(name="")
-                  %option(value="5") 5 Stars
-                  %option(value="4") 4 Stars
-                  %option(value="3") 3 Stars
-                  %option(value="2") 2 Stars
-                  %option(value="1") 1 Star
-              %td
-                = link_to "TV Shows"
-              %td
-                = link_to "", method: :post do
-                  %i.glyphicon.glyphicon-remove
-            %tr
-              %td
-                %input.form-control(type="text" value="2")
-              %td
-                = link_to "Family Guy"
-              %td
-                = button_to "Play", nil, class: "btn btn-default"
-              %td
-                %select(name="")
-                  %option(value="5") 5 Stars
-                  %option(value="4") 4 Stars
-                  %option(value="3") 3 Stars
-                  %option(value="2") 2 Stars
-                  %option(value="1") 1 Star
-              %td
-                = link_to "TV Shows"
-              %td
-                = link_to "", method: :post do
-                  %i.glyphicon.glyphicon-remove
+            - @items.each do |item|
+
+              %tr
+                %td
+                  %input.form-control(type="text" value="#{item.position}")
+                %td
+                  = link_to item.video_title, video_path(item.video_id)
+                %td
+                  = button_to "Play", nil, class: "btn btn-default"
+                %td
+                  %select.form-group(name="")
+                    %option(value="5") 5 Stars
+                    %option(value="4") 4 Stars
+                    %option(value="3") 3 Stars
+                    %option(value="2") 2 Stars
+                    %option(value="1") 1 Star
+                %td
+                  %p= item.rating || 'N/A'
+                %td
+                  = link_to item.video_category
+                %td
+                  = link_to item, method: :delete do
+                    %i.glyphicon.glyphicon-remove
         = button_to "Update Instant Queue", nil, class: "btn btn-default"
