@@ -21,7 +21,7 @@ end
 group :development, :test do
   gem 'pry'
   gem 'pry-nav'
-  gem 'rspec-rails', '2.99'
+  gem 'rspec-rails', '~> 3'
 end
 
 group :test do
@@ -30,6 +30,7 @@ group :test do
   gem 'vcr', '2.9.3'
   gem 'fabrication'
   gem 'faker'
+  gem 'capybara'
 end
 
 group :production do

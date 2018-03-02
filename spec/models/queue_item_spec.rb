@@ -3,6 +3,8 @@ require 'spec_helper'
 describe QueueItem do
 	it { should belong_to(:user) }
 	it { should belong_to(:video) }
+	it { should validate_numericality_of(:position).only_integer }
+
 	context 'video and category' do
 		category = Category.create(name: 'Action')
 		let(:video) { Fabricate(:video, title: 'Die Hard', category: category) }
