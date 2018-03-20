@@ -6,10 +6,6 @@ feature 'User adds video to my_queue' do
 			sign_in
 		end
 		scenario 'add queue_item' do
-			# let(:comedy) { Fabricate(:category, name: 'comedy') }
-			# let(:video_1) { Fabricate(:video, category: comedy) }
-			# let(:video_2) { Fabricate(:video, category: comedy) }
-			# let(:video_3) { Fabricate(:video, category: comedy) }
 			comedy = Fabricate(:category, name: 'comedy')
 			video_1 = Fabricate(:video, category: comedy)
 			video_2 = Fabricate(:video, category: comedy)

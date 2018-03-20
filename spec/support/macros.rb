@@ -1,5 +1,7 @@
 def authenticate(user = nil)
-  session[:user_id] = (user || Fabricate(:user)).id
+	user = user || Fabricate(:user)
+	session[:user_id] = user.id 
+	user
 end
 
 def sign_in(user = nil)

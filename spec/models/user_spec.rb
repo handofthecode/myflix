@@ -6,6 +6,7 @@ describe User do
 	it { should validate_presence_of(:full_name) }
 	it { should validate_uniqueness_of(:email) }
 	it { should have_many(:queue_items) }
+	it {should have_many(:reviews).order("created_at DESC")}
 
 	describe "#in_queue?" do
 		context "user and videos" do
