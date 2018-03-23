@@ -13,7 +13,7 @@ class SessionsController < ApplicationController
 	end
 	def destroy
 		session[:user_id] = nil
-		flash[:notice] = 'You have logged out.'
+		flash[:success] = 'You have logged out.'
 		redirect_to root_path
 	end
 
@@ -21,7 +21,7 @@ class SessionsController < ApplicationController
 
 	def init_session(user)
 		session[:user_id] = user.id
-		flash[:notice] = "You are logged in!"
+		flash[:success] = "You are logged in!"
 		redirect_to videos_path
 	end
 end

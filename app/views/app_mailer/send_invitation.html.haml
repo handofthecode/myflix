@@ -1,0 +1,6 @@
+!!! 5
+%html(lang="en-US")
+  %body
+    %p You are invited to join MyFlix by your friend #{@invitation.inviter}!
+    %p= @invitation.message
+    = link_to "Accept this invitation", "#"

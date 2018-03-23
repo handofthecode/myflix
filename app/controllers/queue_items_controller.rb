@@ -42,7 +42,7 @@ class QueueItemsController < ApplicationController
 	def delete_record(item_id)
 		current_user.queue_items.delete(item_id) if current_user.in_queue?(item_id)
 	rescue ActiveRecord::RecordNotFound
-	  flash[:notice] = "Video does not exist"
+	  flash[:error] = "Video does not exist"
 	end
 
 	def new_item_position

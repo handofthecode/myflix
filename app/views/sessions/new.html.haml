@@ -3,7 +3,7 @@
     .col-sm-10.col-sm-offset-1
       = form_tag sessions_path, class: 'sign_in' do
         %header
-          %h1 Sign in
+          %h1 Sign In
         %fieldset
           = label_tag :email, 'Email Address'
           .row
@@ -15,4 +15,5 @@
               = password_field_tag :password, params[:password] || '', class: 'form-control'
         %br
         %fieldset.form-group.action
-          %input(type="submit" value="Sign in" class="btn btn-default")
+          %input(type="submit" value="Sign In" class="btn btn-default")
+          = link_to "Forgot Password?", forgot_password_path
