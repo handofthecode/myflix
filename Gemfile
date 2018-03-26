@@ -8,7 +8,7 @@ gem 'haml-rails'
 gem 'sass-rails'
 gem 'uglifier'
 gem 'jquery-rails'
-gem 'pg'
+gem 'pg', '0.17.0'
 gem 'bcrypt'
 gem "bootstrap_form", "~> 2.7"
 

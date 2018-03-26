@@ -9,7 +9,8 @@ class UsersController < ApplicationController
 	def new_with_invitation_token
 		invitation = Invitation.find_by_token(params[:token])
 		if invitation
-			@user = User.new(email: invitation.recipient_email, invitation_token: invitation.token)
+			@user = User.new(email: invitation.recipient_email, full_name: invitation.recipient_name)
+			@invitation_token = invitation.token
 			render :new
 		else
 			redirect_to expired_token_path
@@ -18,7 +19,7 @@ class UsersController < ApplicationController
 	def create
 		@user = User.new(user_params)
 		if @user.save
-			set_following_relationships
+			handle_invitation_relationships
 			AppMailer.send_welcome_email(@user).deliver
 			redirect_to sign_in_path
 		else
@@ -27,18 +28,18 @@ class UsersController < ApplicationController
 	end
 
 	private
-	
-	def set_following_relationships
-		if @user.invitation_token
-			invitation = Invitation.find_by_token(@user.invitation_token)
+
+	def handle_invitation_relationships
+		if !params[:invitation_token].blank?
+			invitation = Invitation.find_by_token(params[:invitation_token])
 			connect_two_users(@user, invitation.inviter)
 		end
 	end
 	def connect_two_users(user_1, user_2)
-		Relationship.create(follower: user_1, leader: user_2)
-		Relationship.create(follower: user_2, leader: user_1)
+		user_1.follow user_2
+		user_2.follow user_1
 	end
 	def user_params
-		params.require(:user).permit(:full_name, :password, :email, :invitation_token)
+		params.require(:user).permit(:full_name, :password, :email)
 	end
 end

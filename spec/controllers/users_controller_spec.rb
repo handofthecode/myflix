@@ -22,7 +22,7 @@ describe UsersController do
 			let(:inviter) { Fabricate(:user) }
 			let(:invitation) { Fabricate(:invitation, inviter: inviter) }
 			before do
-				post :create, user: Fabricate.attributes_for(:user, email: invitation.recipient_email).merge!(invitation_token: invitation.token)
+				post :create, user: Fabricate.attributes_for(:user, email: invitation.recipient_email), invitation_token: invitation.token
 			end
 			it "automatically connects inviter and new user. Each follows the other." do
 				new_user = User.find_by_email(invitation.recipient_email)
@@ -33,7 +33,7 @@ describe UsersController do
 		end
 
 		context "sending sign up mailer" do
-			after { ActionMailer::Base.deliveries.clear }
+			before { ActionMailer::Base.deliveries.clear }
 			it "sends out email to user with valid inputs" do
 				post :create, user: {email: "bob@hotmail.com", password: "password", full_name: "bob bobberson"}
 				expect(ActionMailer::Base.deliveries.last.to).to eq(["bob@hotmail.com"])
@@ -75,7 +75,7 @@ describe UsersController do
 				expect(assigns(:user).email).to eq(invitation.recipient_email)
 			end
 			it "sets the invitation token on @user" do
-				expect(assigns(:user).invitation_token).to eq(invitation.token)
+				expect(assigns(:invitation_token)).to eq(invitation.token)
 			end
 		end
 		context "invitation with invalid token" do

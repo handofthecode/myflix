@@ -1,6 +1,6 @@
 !!! 5
 %html(lang="en-US")
   %body
-    %p You are invited to join MyFlix by your friend #{@invitation.inviter}!
+    %p= "You are invited to join MyFlix by your friend #{@invitation.inviter.full_name}!"
     %p= @invitation.message
-    = link_to "Accept this invitation", "#"
+    = link_to "Accept this invitation", register_with_token_url(@invitation.token)

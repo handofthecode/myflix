@@ -47,23 +47,23 @@ describe RelationshipsController do
       end
       it 'creates a new relationship' do
         authenticate alice
-        post :create, id: bob.id
+        post :create, id: bob.token
         expect(Relationship.count).to eq(1)
       end
       it "redirects to leader page" do
         authenticate alice
-        post :create, id: bob.id
+        post :create, id: bob.token
         expect(response).to redirect_to user_path(bob)
       end
       it "does not create a relationship if the follower already follows the leader" do
         authenticate alice
-        post :create, id: bob.id
-        post :create, id: bob.id
+        post :create, id: bob.token
+        post :create, id: bob.token
         expect(Relationship.count).to eq(1)
       end
       it "cannot create a relationship between the same user and herself" do
         authenticate alice
-        post :create, id: alice.id
+        post :create, id: alice.token
         expect(Relationship.count).to eq(0)
       end
     end

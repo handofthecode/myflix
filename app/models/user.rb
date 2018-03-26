@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+	include Tokenable
 	has_many :reviews, -> { order("created_at DESC")}
 	has_many :queue_items, -> { order("position ASC") }
 	has_many :invitations
@@ -7,10 +8,7 @@ class User < ActiveRecord::Base
 
 	validates_presence_of :full_name, :password, :email
 	validates_uniqueness_of :email
-
 	has_secure_password validations: false
-
-	before_create :generate_token
 
 	def followers
 		leading_relationships.map do |relationship|
@@ -22,6 +20,9 @@ class User < ActiveRecord::Base
 			relationship.leader
 		end
 	end
+	def follow(other_user)
+		Relationship.create(follower: self, leader: other_user)
+	end
 	def normalize_queue_item_position
 		queue_items.each_with_index.map do |item, idx|
 			item.update(position: idx + 1)
@@ -30,10 +31,6 @@ class User < ActiveRecord::Base
 
 	def to_param
 		token
-	end
-
-	def generate_token
-		self.token = SecureRandom.urlsafe_base64
 	end
 
 	def in_queue?(item)

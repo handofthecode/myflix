@@ -8,6 +8,10 @@ describe User do
 	it { should have_many(:queue_items) }
 	it {should have_many(:reviews).order("created_at DESC")}
 
+	it_behaves_like "tokenable" do
+		let(:object) { Fabricate(:user) }
+	end
+	
 	describe "#in_queue?" do
 		context "user and videos" do
 			let(:user) { Fabricate(:user) }

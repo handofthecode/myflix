@@ -29,8 +29,8 @@ describe VideosController do
 		context "with authenticated user" do
 			before { authenticate }
 			it "it sets the @result variable" do
-				get :search, search: "ar"
-				expect(assigns(:results)).to eq([video])
+				get :search, search: "ard"
+				expect(assigns(:results)).to be_present
 			end 
 		end
 		context "with unauthenticated user" do
