@@ -8,7 +8,7 @@ class InvitationsController < ApplicationController
     if @invitation.save
       AppMailer.send_invitation(@invitation).deliver
       flash[:success] = 'Invitation sent!'
-      redirect_to new_invitation_path
+      redirect_to new_invitation_url
     else
       flash[:error] = @invitation.errors.full_messages.first
       render :new

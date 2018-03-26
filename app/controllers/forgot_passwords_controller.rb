@@ -6,7 +6,7 @@ class ForgotPasswordsController < ApplicationController
     if user
       AppMailer.send_forgot_password(user).deliver
       flash[:success] = "Reset email has been sent to #{user.email}"
-      redirect_to forgot_password_confirmation_path
+      redirect_to forgot_password_confirmation_url
     elsif params[:email].blank?
       flash[:error] = 'Email field must not be blank'
       redirect_to forgot_password_path
