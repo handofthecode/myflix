@@ -5,7 +5,7 @@ Myflix::Application.configure do
   config.action_controller.perform_caching = true
 
   config.serve_static_assets = false
-  config.action_mailer.default_url_options[:host] = 'my-flix-app.herokuapp.com'
+  Rails.application.routes.default_url_options[:host] = 'my-flix-app.herokuapp.com'
   config.assets.js_compressor = :uglifier
 
   config.assets.compile = false
