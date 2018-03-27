@@ -1,2 +1,2 @@
 web: bundle exec unicorn -p $PORT -E $RACK_ENV -c ./config/unicorn.rb
-worker: sidekiq
+worker: bundle exec sidekiq -e production -C config/sidekiq.yml
