@@ -20,7 +20,7 @@ class UsersController < ApplicationController
 		@user = User.new(user_params)
 		if @user.save
 			handle_invitation_relationships
-			AppMailer.send_welcome_email(@user).deliver
+			AppMailer.delay.send_welcome_email(@user)
 			redirect_to sign_in_path
 		else
 			render :new
