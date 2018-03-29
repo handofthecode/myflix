@@ -1,4 +1,9 @@
 Myflix::Application.routes.draw do
+  
+  namespace :admin do
+    resources :videos, only: [:new, :create]
+  end
+
   get 'ui(/:action)', controller: 'ui'
 
   root to: 'pages#front'

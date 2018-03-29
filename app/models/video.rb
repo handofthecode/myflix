@@ -3,6 +3,9 @@ class Video < ActiveRecord::Base
 	has_many :queue_items
 	belongs_to :category
 
+	mount_uploader :large_cover, LargeCoverUploader
+	mount_uploader :small_cover, SmallCoverUploader
+
 	validates_presence_of :title, :description
 
 	def self.search_by_title(query)

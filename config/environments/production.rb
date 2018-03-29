@@ -15,4 +15,8 @@ Myflix::Application.configure do
   config.i18n.fallbacks = true
 
   config.active_support.deprecation = :notify
+  
+  # Raven.configure do |config|
+  #   config.dsn = 'https://30ca1b36aedd4e93bbf16e22531fddf5:2710cac194d14a47a2705fed90d40614@sentry.io/662424'
+  # end
 end

@@ -13,6 +13,11 @@ gem 'bcrypt'
 gem "bootstrap_form", "~> 2.7"
 gem 'sidekiq', "3.3.3"
 gem 'unicorn'
+gem "sentry-raven"
+gem "carrierwave"
+gem "carrierwave-aws"
+gem "mini_magick"
+
 
 group :development do
   gem 'thin'

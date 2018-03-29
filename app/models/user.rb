@@ -10,6 +10,9 @@ class User < ActiveRecord::Base
 	validates_uniqueness_of :email
 	has_secure_password validations: false
 
+	def admin?
+		!!admin
+	end
 	def followers
 		leading_relationships.map do |relationship|
 			relationship.follower
