@@ -7,6 +7,7 @@
     = csrf_meta_tag
     = stylesheet_link_tag "application"
     = javascript_include_tag "application"
+    %script(type="text/javascript" src="https://js.stripe.com/v3/")
   %body
     %header
       = render 'shared/header'
@@ -14,4 +15,4 @@
       = render 'shared/messages'
       = yield
     %footer
-      &copy 2013 MyFLiX
+      &copy 2018 MyFLiX

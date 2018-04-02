@@ -17,6 +17,8 @@ gem "sentry-raven"
 gem "carrierwave"
 gem "carrierwave-aws"
 gem "mini_magick"
+gem 'stripe'
+gem 'dotenv-rails'
 
 
 group :development do
@@ -40,6 +42,7 @@ group :test do
   gem 'faker'
   gem 'capybara'
   gem 'capybara-email'
+  gem 'webmock'
 end
 
 group :production do

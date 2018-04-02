@@ -35,3 +35,5 @@
         %fieldset.actions.control-group.col-sm-offset-2
           .controls
             %input(type="submit" value="Sign Up" class="btn btn-default")
+            %script.stripe-button{"data-name" => "charge", data-amount" => "500", "data-description" => "A month's subscription", "data-key" => ENV['STRIPE_PUBLISHABLE_KEY'], "data-locale" => "auto", :src => "https://checkout.stripe.com/checkout.js"}
+

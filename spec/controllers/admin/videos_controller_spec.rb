@@ -26,7 +26,8 @@ describe Admin::VideosController do
     end
     context "with valid input" do
       let(:category) { Fabricate(:category) }
-      before do 
+      before do
+        Video.all.destroy_all
         authenticate Fabricate(:admin)
         post :create, video: {title: 'Jurassic Park', category_id: category.id, description: 'Great movie!'}
       end
@@ -42,6 +43,7 @@ describe Admin::VideosController do
     end
     context "with invalid input" do
       before do 
+        Video.all.destroy_all
         authenticate Fabricate(:admin)
         post :create, video: {title: 'Jurassic Park'}
       end

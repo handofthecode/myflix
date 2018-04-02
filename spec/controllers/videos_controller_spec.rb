@@ -29,12 +29,14 @@ describe VideosController do
 		context "with authenticated user" do
 			before { authenticate }
 			it "it sets the @result variable" do
+				video
 				get :search, search: "ard"
 				expect(assigns(:results)).to be_present
 			end 
 		end
 		context "with unauthenticated user" do
 			it "redirects to sign_in page" do
+				video
 				get :search, search: "ar"
 				expect(response).to redirect_to sign_in_path
 			end
