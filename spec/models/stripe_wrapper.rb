@@ -20,20 +20,19 @@ describe StripeWrapper::Charge do
     )
   }
 
-  context "with valid card" do
+  context "with valid card", :vcr do
     let(:card_number) {4242424242424242}
     it "charges the card successfully" do
       expect(response).to be_successful
     end
   end
 
-  context "with invalid card" do
+  context "with invalid card", :vcr do
     let(:card_number) {4000000000000002}
     it "does not charge the card" do
       expect(response).not_to be_successful
     end
-    it "has an error message" do
-      binding.pry
+    it "has an error message", :vcr do
       expect(response.status).to eq(:error)
     end
   end
