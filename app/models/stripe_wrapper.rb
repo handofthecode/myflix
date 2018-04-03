@@ -8,7 +8,7 @@ module StripeWrapper
     def self.create(options={})
       begin
         customer = Stripe::Customer.create(email: options[:email], source: options[:source])
-        response = Stripe::Charge.create(amount: options[:amount], currency: 'usd', customer: customer.id, description: options[:description])
+        response = Stripe::Charge.create(amount: 999, currency: 'usd', customer: customer.id, description: options[:description])
         new(response, :success)
       rescue Stripe::CardError => e
         new(e, :error)

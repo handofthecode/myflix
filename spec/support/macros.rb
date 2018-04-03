@@ -14,5 +14,6 @@ def sign_in(user = nil)
 end
 
 def sign_out
-	Capybara.current_session.driver.delete logout_path
+	find('a#dlabel').click
+	find('a[href="/logout"]').click
 end

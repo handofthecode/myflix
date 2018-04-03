@@ -10,56 +10,89 @@ describe UsersController do
 	end
 
 	describe "POST create" do
-		context "valid input" do
-			before { post :create, user: Fabricate.attributes_for(:user) }
-			it "creates the user" do
-				expect(User.count).to eq(1)
-			end
-			it "redirects to sign_in when params are valid" do
-				expect(response).to redirect_to sign_in_path
-			end
-		context "valid input with valid invite token" do
-			let(:inviter) { Fabricate(:user) }
-			let(:invitation) { Fabricate(:invitation, inviter: inviter) }
+		context "invalid credit card credentials" do
 			before do
-				post :create, user: Fabricate.attributes_for(:user, email: invitation.recipient_email), invitation_token: invitation.token
+				charge = double('charge')
+				charge.stub(:successful?).and_return(false)
+				charge.stub(:error_message).and_return('invalid credentials')
+				StripeWrapper::Charge.stub(:create).and_return(charge)
 			end
-			it "automatically connects inviter and new user. Each follows the other." do
-				new_user = User.find_by_email(invitation.recipient_email)
-				expect(inviter.followers).to include(new_user)
-				expect(new_user.followers).to include(inviter)
-			end
-		end
+			context "valid personal data input" do
+				before { post :create, user: Fabricate.attributes_for(:user) }
+				it "does not create the user" do
+					expect(User.count).to eq(0)
+				end
+				it "rerenders new template when params are invalid" do
+					expect(response).to render_template :new 
+				end
+				it "sets flash error message" do
+					expect(flash[:error]).to be_present 
+				end
+				it "assigns @user to be instance of User" do
+					expect(assigns(:user)).to be_a(User)
+				end
+			end		
+
+
+
 		end
 
-		context "sending sign up mailer" do
-			before { ActionMailer::Base.deliveries.clear }
-			it "sends out email to user with valid inputs" do
-				post :create, user: {email: "bob@hotmail.com", password: "password", full_name: "bob bobberson"}
-				expect(ActionMailer::Base.deliveries.last.to).to eq(["bob@hotmail.com"])
+
+		context "valid credit card credentials" do
+			before do
+				charge = double('charge')
+				charge.stub(:successful?).and_return(true)
+				StripeWrapper::Charge.stub(:create).and_return(charge)
 			end
-			it "sends out email containing users name" do
-				post :create, user: {email: "bob@hotmail.com", password: "password", full_name: "bob bobberson"}
-				expect(ActionMailer::Base.deliveries.last.body).to include("bob bobberson")
+			context "valid personal data input" do
+				before { post :create, user: Fabricate.attributes_for(:user) }
+				it "creates the user" do
+					expect(User.count).to eq(1)
+				end
+				it "redirects to sign_in when params are valid" do
+					expect(response).to redirect_to sign_in_path
+				end
+				context "valid input with valid invite token" do
+					let(:inviter) { Fabricate(:user) }
+					let(:invitation) { Fabricate(:invitation, inviter: inviter) }
+					before do
+						post :create, user: Fabricate.attributes_for(:user, email: invitation.recipient_email), invitation_token: invitation.token
+					end
+					it "automatically connects inviter and new user. Each follows the other." do
+						new_user = User.find_by_email(invitation.recipient_email)
+						expect(inviter.followers).to include(new_user)
+						expect(new_user.followers).to include(inviter)
+					end
+				end
 			end
-			it "does not send out email with invalid inputs" do
-				post :create, user: {email: "bob@hotmail.com"}
-				expect(ActionMailer::Base.deliveries).to be_empty
+			context "invalid personal data input" do
+				before { post :create, user: INVALID_PERSON }
+				it "does not create the user" do
+					expect(User.count).to eq(0)
+				end
+				it "rerenders new template when params are invalid" do
+					expect(response).to render_template :new 
+				end
+				it "assigns @user to be instance of User" do
+					expect(assigns(:user)).to be_a(User)
+				end
+			end		
+			context "sending sign up mailer" do
+				before { ActionMailer::Base.deliveries.clear }
+				it "sends out email to user with valid inputs" do
+					post :create, user: {email: "bob@hotmail.com", password: "password", full_name: "bob bobberson"}
+					expect(ActionMailer::Base.deliveries.last.to).to eq(["bob@hotmail.com"])
+				end
+				it "sends out email containing users name" do
+					post :create, user: {email: "bob@hotmail.com", password: "password", full_name: "bob bobberson"}
+					expect(ActionMailer::Base.deliveries.last.body).to include("bob bobberson")
+				end
+				it "does not send out email with invalid inputs" do
+					post :create, user: {email: "bob@hotmail.com"}
+					expect(ActionMailer::Base.deliveries).to be_empty
+				end
 			end
 		end
-
-		context "invalid input" do
-			before { post :create, user: INVALID_PERSON }
-			it "does not create the user" do
-				expect(User.count).to eq(0)
-			end
-			it "rerenders new template when params are invalid" do
-				expect(response).to render_template :new 
-			end
-			it "assigns @user to be instance of User" do
-				expect(assigns(:user)).to be_a(User)
-			end
-		end		
 	end
 
 	describe "GET new_with_invitation_token" do
