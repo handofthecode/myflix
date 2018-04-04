@@ -19,6 +19,7 @@ gem "carrierwave-aws"
 gem "mini_magick"
 gem 'stripe'
 gem 'dotenv-rails'
+gem 'draper'
 
 
 group :development do
@@ -44,6 +45,7 @@ group :test do
   gem 'capybara-email'
   gem 'webmock'
   gem 'selenium-webdriver'
+  gem 'poltergeist'
 end
 
 group :production do

@@ -12,9 +12,7 @@ describe UsersController do
 	describe "POST create" do
 		context "invalid credit card credentials" do
 			before do
-				charge = double('charge')
-				charge.stub(:successful?).and_return(false)
-				charge.stub(:error_message).and_return('invalid credentials')
+				charge = double(:charge, successful?: false, error_message: 'invalid card data')
 				StripeWrapper::Charge.stub(:create).and_return(charge)
 			end
 			context "valid personal data input" do
@@ -31,17 +29,11 @@ describe UsersController do
 				it "assigns @user to be instance of User" do
 					expect(assigns(:user)).to be_a(User)
 				end
-			end		
-
-
-
+			end
 		end
-
-
 		context "valid credit card credentials" do
 			before do
-				charge = double('charge')
-				charge.stub(:successful?).and_return(true)
+				charge = double(:charge, successful?: true)
 				StripeWrapper::Charge.stub(:create).and_return(charge)
 			end
 			context "valid personal data input" do
@@ -75,6 +67,9 @@ describe UsersController do
 				end
 				it "assigns @user to be instance of User" do
 					expect(assigns(:user)).to be_a(User)
+				end
+				it "should not charge credit card" do
+					expect(StripeWrapper::Charge).not_to receive(:create)
 				end
 			end		
 			context "sending sign up mailer" do

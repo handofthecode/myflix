@@ -32,7 +32,6 @@ class UsersController < ApplicationController
 	private
 
 	def charge_card
-		StripeWrapper.set_api_key
 		charge = StripeWrapper::Charge.create(
 			:email => @user.email,
 			:source  => params[:stripeToken],
