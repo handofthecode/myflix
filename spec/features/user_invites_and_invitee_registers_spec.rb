@@ -13,6 +13,7 @@ feature 'user invites and invitee registers' do
     open_email "biggins@hotmail.com"
     expect(current_email).to have_content "You are invited to join MyFlix by your friend #{user.full_name}!"
     current_email.click_link "Accept this invitation"
+    sleep 1
     expect(page).to have_content "Register"
 
     fill_in 'user_email', with: 'biggins@hotmail.com'

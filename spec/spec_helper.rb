@@ -27,6 +27,8 @@ Capybara.register_driver :poltergeist do |app|
 end
 
 Capybara.javascript_driver = :poltergeist
+Capybara.server_port = 52662
+
 
 
 # Requires supporting ruby files with custom matchers and macros, etc, in

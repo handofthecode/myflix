@@ -37,10 +37,11 @@ class User < ActiveRecord::Base
 	end
 
 	def in_queue?(item)
-		if queue_items.any?
-			!!(item.class == Video ? queue_items.find_by(video: item) : queue_items.find(item))
+		return false if queue_items.empty?
+		!!if (item.class == Video || item.class == VideoDecorator)
+			queue_items.find_by(video: item)
 		else
-			false
+			queue_items.find(item)
 		end
 	end
 
