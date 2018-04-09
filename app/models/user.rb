@@ -38,10 +38,12 @@ class User < ActiveRecord::Base
 
 	def in_queue?(item)
 		return false if queue_items.empty?
-		!!if (item.class == Video || item.class == VideoDecorator)
+		!!if (item.is_a?(Video) || item.is_a?(VideoDecorator))
 			queue_items.find_by(video: item)
-		else
+		elsif (item.is_a?(QueueItem) || item.is_a?(String))
 			queue_items.find(item)
+		else
+			raise ArgumentError.new("in_queue? method cannot handle #{item.class} objects.") 
 		end
 	end
 

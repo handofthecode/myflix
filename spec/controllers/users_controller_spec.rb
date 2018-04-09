@@ -1,5 +1,4 @@
 require 'spec_helper'
-INVALID_PERSON = {full_name: 'bob bobbers', password: 'password'}
 
 describe UsersController do
 	describe "GET new" do
@@ -10,82 +9,33 @@ describe UsersController do
 	end
 
 	describe "POST create" do
-		context "invalid credit card credentials" do
+		context "successfull" do
 			before do
-				charge = double(:charge, successful?: false, error_message: 'invalid card data')
-				StripeWrapper::Charge.stub(:create).and_return(charge)
+				result = double(:sign_up_result, successful?: true, success_message: 'success message!')
+				UserSignup.any_instance.should_receive(:sign_up).and_return(result)
+				post :create, user: Fabricate.attributes_for(:user)
 			end
-			context "valid personal data input" do
-				before { post :create, user: Fabricate.attributes_for(:user) }
-				it "does not create the user" do
-					expect(User.count).to eq(0)
-				end
-				it "rerenders new template when params are invalid" do
-					expect(response).to render_template :new 
-				end
-				it "sets flash error message" do
-					expect(flash[:error]).to be_present 
-				end
-				it "assigns @user to be instance of User" do
-					expect(assigns(:user)).to be_a(User)
-				end
+			it "redirects to sign_in when params are valid" do
+				expect(response).to redirect_to sign_in_path
+			end
+			it "sets flash success" do
+				expect(flash[:success]).to be_present
 			end
 		end
-		context "valid credit card credentials" do
+		context "unsuccessfull" do
 			before do
-				charge = double(:charge, successful?: true)
-				StripeWrapper::Charge.stub(:create).and_return(charge)
+				result = double(:sign_up_result, successful?: false, error_message: 'Sign up failed.')
+				UserSignup.any_instance.should_receive(:sign_up).and_return(result)
+				post :create, user: Fabricate.attributes_for(:user)
 			end
-			context "valid personal data input" do
-				before { post :create, user: Fabricate.attributes_for(:user) }
-				it "creates the user" do
-					expect(User.count).to eq(1)
-				end
-				it "redirects to sign_in when params are valid" do
-					expect(response).to redirect_to sign_in_path
-				end
-				context "valid input with valid invite token" do
-					let(:inviter) { Fabricate(:user) }
-					let(:invitation) { Fabricate(:invitation, inviter: inviter) }
-					before do
-						post :create, user: Fabricate.attributes_for(:user, email: invitation.recipient_email), invitation_token: invitation.token
-					end
-					it "automatically connects inviter and new user. Each follows the other." do
-						new_user = User.find_by_email(invitation.recipient_email)
-						expect(inviter.followers).to include(new_user)
-						expect(new_user.followers).to include(inviter)
-					end
-				end
+			it "redirects to sign_in when params are valid" do
+				expect(response).to render_template :new
 			end
-			context "invalid personal data input" do
-				before { post :create, user: INVALID_PERSON }
-				it "does not create the user" do
-					expect(User.count).to eq(0)
-				end
-				it "rerenders new template when params are invalid" do
-					expect(response).to render_template :new 
-				end
-				it "assigns @user to be instance of User" do
-					expect(assigns(:user)).to be_a(User)
-				end
-				it "should not charge credit card" do
-					expect(StripeWrapper::Charge).not_to receive(:create)
-				end
-			end		
-			context "sending sign up mailer" do
-				before { ActionMailer::Base.deliveries.clear }
-				it "sends out email to user with valid inputs" do
-					post :create, user: {email: "bob@hotmail.com", password: "password", full_name: "bob bobberson"}
-					expect(ActionMailer::Base.deliveries.last.to).to eq(["bob@hotmail.com"])
-				end
-				it "sends out email containing users name" do
-					post :create, user: {email: "bob@hotmail.com", password: "password", full_name: "bob bobberson"}
-					expect(ActionMailer::Base.deliveries.last.body).to include("bob bobberson")
-				end
-				it "does not send out email with invalid inputs" do
-					post :create, user: {email: "bob@hotmail.com"}
-					expect(ActionMailer::Base.deliveries).to be_empty
-				end
+			it "assigns @user to be instance of User" do
+				expect(assigns(:user)).to be_a(User)
+			end
+			it "sets flash success" do
+				expect(flash[:error]).to be_present
 			end
 		end
 	end
