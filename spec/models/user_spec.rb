@@ -11,6 +11,14 @@ describe User do
 	it_behaves_like "tokenable" do
 		let(:object) { Fabricate(:user) }
 	end
+
+	describe "#deactivate!" do
+		it "deactivates user" do
+			user = Fabricate(:user)
+			user.deactivate!
+			expect(user).not_to be_active
+		end
+	end
 	
 	describe "#in_queue?" do
 		context "user and videos" do

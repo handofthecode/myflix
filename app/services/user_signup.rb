@@ -6,7 +6,8 @@ class UserSignup
   end
 
   def sign_up(stripe_token, invitation_token)
-		if @user.save && charge_card(stripe_token)
+
+    if @user.save && subscribe_customer(stripe_token)
 			handle_invitation_relationships invitation_token
 			AppMailer.delay.send_welcome_email(@user)
       @success_message = "Welcome #{@user.full_name}! You can now sign in."
@@ -23,18 +24,35 @@ class UserSignup
 
   private
 
-  def charge_card(stripe_token)
-		charge = StripeWrapper::Charge.create(
+  def subscribe_customer(stripe_token)
+		@customer = StripeWrapper::Customer.create(
 			:email => @user.email,
 			:source  => stripe_token,
-			:description => "Sign up charge for #{@user.email}"
+			:description => "Registered #{@user.email}"
     )
-    if charge.successful?
+    if @customer.successful?
+      @user.update_column(:customer_id, customer_id)
+      subscribe
       true
     else
-      @error_message = charge.error_message
+      @error_message = @customer.error_message
       false
     end
+  end
+
+  def subscribe
+    Stripe::Subscription.create(
+      customer: customer_id,
+      items: [
+        {
+          plan: "plan_CenYtY4sih2FUJ"
+        }
+      ]
+    )
+  end
+
+  def customer_id
+    @customer_id ||= JSON.parse(@customer.response.to_s)["id"]
   end
 
   def handle_invitation_relationships(invitation_token)

@@ -20,6 +20,7 @@ gem "mini_magick"
 gem 'stripe'
 gem 'dotenv-rails'
 gem 'draper'
+gem 'stripe_event', '~> 1.1'
 
 
 group :development do
