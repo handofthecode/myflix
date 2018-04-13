@@ -21,7 +21,8 @@ gem 'stripe'
 gem 'dotenv-rails'
 gem 'draper'
 gem 'stripe_event', '~> 1.1'
-
+gem 'elasticsearch-model'
+gem 'elasticsearch-rails'
 
 group :development do
   gem 'thin'

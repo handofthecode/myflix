@@ -10,7 +10,8 @@ Myflix::Application.routes.draw do
   root to: 'pages#front'
   resources :videos, only: [:index, :show] do
   	collection do
-  		get 'search', to: 'videos#search'
+      get 'search', to: 'videos#search'
+      get 'advanced_search', to: "videos#advanced_search", as: :advanced_search
   	end
     resources :reviews, only: [:create]
   end

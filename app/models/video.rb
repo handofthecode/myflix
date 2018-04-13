@@ -1,4 +1,8 @@
 class Video < ActiveRecord::Base
+	include Elasticsearch::Model
+	include Elasticsearch::Model::Callbacks
+	index_name ["myflix", Rails.env].join('_')
+
 	has_many :reviews, -> {order 'created_at DESC'}
 	has_many :queue_items
 	belongs_to :category
@@ -13,7 +17,47 @@ class Video < ActiveRecord::Base
 		where("title LIKE ?", "%#{query}%").order("created_at DESC")
 	end
 
-	def average_rating	
+	def average_rating
 		(reviews.map(&:rating).inject(:+).to_f / reviews.size).round(1) if reviews.any?
+	end
+
+	def as_indexed_json(options={})
+		as_json(
+			methods: [:average_rating],
+			only: [:title, :description],
+			include: { 
+				reviews: {only: [:content]}
+			})
+	end
+
+	def self.search(query, options={})
+		search_definition = {
+			query: {
+				bool: {
+					must: {
+						multi_match: {
+							query: query,
+							fields: ["title^100", "description^50"],
+							operator: "and"
+						}
+					}
+				}
+			}
+		}
+
+		if query.present? && options[:reviews]
+			search_definition[:query][:bool][:must][:multi_match][:fields] << "reviews.content"
+		end		
+		if options[:rating_from].present? || options[:rating_to].present?
+			search_definition[:query][:bool][:filter] = {
+				range: {
+					average_rating: {
+						gte: (options[:rating_from] if options[:rating_from].present?),
+						lte: (options[:rating_to] if options[:rating_to].present?)
+					}
+				}
+			}
+		end
+		__elasticsearch__.search(search_definition)
 	end
 end
